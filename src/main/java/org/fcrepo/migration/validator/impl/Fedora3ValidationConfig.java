@@ -19,7 +19,6 @@ public class Fedora3ValidationConfig extends ValidationConfig {
     private int limit;
     private boolean resume;
     private boolean checksum;
-    private boolean failureOnly;
     private boolean deleteInactive;
     private boolean validateHeadOnly;
     private boolean checkNumObjects;
