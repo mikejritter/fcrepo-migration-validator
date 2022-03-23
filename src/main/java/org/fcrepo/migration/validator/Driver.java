@@ -119,6 +119,10 @@ public class Driver implements Callable<Integer> {
                         description = "Report only objects which have failed validations.")
     private boolean failureOnly;
 
+    @CommandLine.Option(names = {"--sqlite"}, order = 19, defaultValue = "false",
+                        description = "Report to a sqlite database.")
+    private boolean sqlite;
+
     @CommandLine.Option(names = {"--debug"}, order = 30, description = "Enables debug logging")
     private boolean debug;
 
@@ -153,10 +157,12 @@ public class Driver implements Callable<Integer> {
         config.setFailureOnly(failureOnly);
         config.setLimit(limit);
         config.setResume(resume);
+        config.setSqlite(sqlite);
         LOGGER.info("Configuration created: {}", config);
 
         LOGGER.info("Preparing to execute validation run...");
-        final var executionManager = new Fedora3ValidationExecutionManager(new ApplicationConfigurationHelper(config));
+        final var appConfig = new ApplicationConfigurationHelper(config);
+        final var executionManager = new Fedora3ValidationExecutionManager(appConfig);
         final var completedRun = executionManager.doValidation();
 
         if (completedRun) {
@@ -173,6 +179,10 @@ public class Driver implements Callable<Integer> {
             LOGGER.info("Validation report summary written to: {}", summaryFile);
         } else {
             LOGGER.warn("Skipping report writing due to exception");
+        }
+
+        if (config.isSqlite()) {
+            appConfig.closeConnection();
         }
 
         return completedRun ? 0 : 1;

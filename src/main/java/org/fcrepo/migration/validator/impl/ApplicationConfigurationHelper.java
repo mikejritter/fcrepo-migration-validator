@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Suppliers;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import edu.wisc.library.ocfl.api.MutableOcflRepository;
 import edu.wisc.library.ocfl.api.OcflRepository;
 import edu.wisc.library.ocfl.core.OcflRepositoryBuilder;
@@ -34,8 +36,12 @@ import org.fcrepo.storage.ocfl.cache.CaffeineCache;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -53,6 +59,9 @@ public class ApplicationConfigurationHelper {
     private final Fedora3ValidationConfig config;
     private final Path workDirectory;
     private final ResumeManager resumeManager;
+
+    private final Supplier<Connection> connectionSupplier;
+    private final Supplier<HikariDataSource> dataSourceSupplier;
     private final Supplier<MutableOcflRepository> repositorySupplier;
 
     public ApplicationConfigurationHelper(final Fedora3ValidationConfig config) {
@@ -62,6 +71,8 @@ public class ApplicationConfigurationHelper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.connectionSupplier = Suppliers.memoize(() -> connect(config));
+        this.dataSourceSupplier = Suppliers.memoize(() -> dataSource(config));
         this.repositorySupplier = Suppliers.memoize(() -> repository(config, workDirectory));
         this.resumeManager = new ResumeManagerImpl(config.getResultsDirectory(), !config.isResume());
     }
@@ -70,8 +81,35 @@ public class ApplicationConfigurationHelper {
         return resumeManager;
     }
 
+    private HikariDataSource dataSource(final Fedora3ValidationConfig config) {
+        final var resultsDir = config.getResultsDirectory();
+        final var db = resultsDir.resolve("validation-results.sqlite");
+
+        // final var props = new Properties();
+        // props.setProperty("dataSourceClassName", "org.sqlite.SQLiteDataSource");
+        // props.setProperty("dataSource.databaseName", db.toString());
+        final var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:sqlite:" + db);
+        return new HikariDataSource(hikariConfig);
+    }
+
+    private Connection connect(final Fedora3ValidationConfig config) {
+        final var resultsDir = config.getResultsDirectory();
+        final var db = resultsDir.resolve("validation-results.sqlite");
+
+        try {
+            return DriverManager.getConnection("jdbc:sqlite:" + db);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ValidationResultWriter validationResultWriter() {
-        return new FileSystemValidationResultWriter(config.getJsonOutputDirectory(), config.isFailureOnly());
+        if (config.isSqlite()) {
+            return new SqliteValidationWriter(connectionSupplier.get());
+        } else {
+            return new FileSystemValidationResultWriter(config.getJsonOutputDirectory(), config.isFailureOnly());
+        }
     }
 
     public ObjectSource objectSource() {
@@ -214,5 +252,13 @@ public class ApplicationConfigurationHelper {
 
     public Boolean checkNumObjects() {
         return config.checkNumObjects();
+    }
+
+    public void closeConnection() {
+        try {
+            connectionSupplier.get().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

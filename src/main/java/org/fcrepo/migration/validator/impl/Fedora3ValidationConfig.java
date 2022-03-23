@@ -19,6 +19,7 @@ public class Fedora3ValidationConfig extends ValidationConfig {
     private int limit;
     private boolean resume;
     private boolean checksum;
+    private boolean failureOnly;
     private boolean deleteInactive;
     private boolean validateHeadOnly;
     private boolean checkNumObjects;
@@ -30,6 +31,7 @@ public class Fedora3ValidationConfig extends ValidationConfig {
     private File indexDirectory;
     private String fedora3Hostname;
     private File objectsToValidate;
+    private boolean sqlite;
 
     /**
      * @return
@@ -214,5 +216,16 @@ public class Fedora3ValidationConfig extends ValidationConfig {
     public Fedora3ValidationConfig setResume(final boolean resume) {
         this.resume = resume;
         return this;
+    }
+
+    /**
+     * @param sqlite
+     */
+    public void setSqlite(boolean sqlite) {
+        this.sqlite = sqlite;
+    }
+
+    public boolean isSqlite() {
+        return sqlite;
     }
 }
