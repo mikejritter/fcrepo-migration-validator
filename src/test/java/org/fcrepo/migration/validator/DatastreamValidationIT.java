@@ -86,6 +86,28 @@ public class DatastreamValidationIT extends AbstractValidationIT {
     }
 
     /**
+     * Test for foxml with contentDigest TYPE="DISABLED" and DIGEST="none"
+     * <p>
+     * Note the {@link org.fcrepo.migration.DatastreamVersion} doesn't have content digest set when the digest type is
+     * disabled so this is just a sanity check
+     */
+    @Test
+    public void testChecksumDisabled() {
+        final File f3DatastreamsDir = new File(FIXTURES_BASE_DIR, "valid/f3/datastreams");
+        final File f3ObjectsDir = new File(FIXTURES_BASE_DIR, "disabled-digest/f3/objects");
+        final File f6OcflRootDir = new File(FIXTURES_BASE_DIR, "valid/f6/data/ocfl-root");
+        final ResultsReportHandler reportHandler =
+            doChecksumValidation(f3DatastreamsDir, f3ObjectsDir, f6OcflRootDir, sha512);
+
+        final var errors = reportHandler.getErrors();
+        assertThat(errors).isEmpty();
+        final var passed = reportHandler.getPassed();
+        assertThat(passed).map(ValidationResult::getValidationType)
+                          .filteredOn(type -> type == BINARY_CHECKSUM)
+                          .hasSize(4);
+    }
+
+    /**
      * Custom doValidation so we can enable checksums with a digest algorithm
      *
      * @param f3DatastreamsDir
