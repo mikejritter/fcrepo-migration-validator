@@ -1,17 +1,14 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree.
+ */
 package org.fcrepo.migration.validator.impl;
 
-import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
-import com.zaxxer.hikari.HikariDataSource;
 import org.fcrepo.migration.validator.api.SqliteInitializer;
 import org.fcrepo.migration.validator.api.ValidationResult;
 import org.fcrepo.migration.validator.api.ValidationResultWriter;

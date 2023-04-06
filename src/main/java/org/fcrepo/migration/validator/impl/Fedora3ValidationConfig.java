@@ -221,7 +221,7 @@ public class Fedora3ValidationConfig extends ValidationConfig {
     /**
      * @param sqlite
      */
-    public void setSqlite(boolean sqlite) {
+    public void setSqlite(final boolean sqlite) {
         this.sqlite = sqlite;
     }
 

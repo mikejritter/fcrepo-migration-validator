@@ -41,7 +41,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 

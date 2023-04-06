@@ -1,15 +1,19 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree.
+ */
 package org.fcrepo.migration.validator.api;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
+ * @author mikejritter
  */
 public class SqliteInitializer {
 
@@ -38,6 +42,9 @@ public class SqliteInitializer {
     private static final String STATUS_INSERT = "INSERT INTO " + STATUS_TABLE + " values(%s, '%s')";
     private static final String VALIDATION_TYPE_INSERT = "INSERT INTO " + VALIDATION_TYPE_TABLE + " values(%s, '%s')";
     private static final String VALIDATION_LEVEL_INSERT = "INSERT INTO " + VALIDATION_LEVEL_TABLE + " values(%s, '%s')";
+
+    private SqliteInitializer() {
+    }
 
     /**
      *
