@@ -19,4 +19,7 @@ public interface ValidationResultWriter {
      * @param results The results to write
      */
     void write(final List<ValidationResult> results);
+
+    default void finish() {
+    }
 }

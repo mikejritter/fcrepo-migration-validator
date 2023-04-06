@@ -34,21 +34,6 @@ public class SqliteValidationWriter implements ValidationResultWriter {
 
     private int count = 0;
     private final Connection connection;
-    // private final DataSource dataSource;
-    // private final PreparedStatement statement;
-
-    /**
-     * @param dataSource
-    public SqliteValidationWriter(final HikariDataSource dataSource) {
-        try {
-            // this.connection = connection;
-            this.dataSource = dataSource;
-            SqliteInitializer.init(this.dataSource);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-     */
 
     /**
      * @param connection
@@ -66,8 +51,7 @@ public class SqliteValidationWriter implements ValidationResultWriter {
 
     @Override
     public synchronized void write(final List<ValidationResult> results) {
-        try (/*var connection = dataSource.getConnection();*/
-            final var statement = connection.prepareStatement(PINSERT)) {
+        try (final var statement = connection.prepareStatement(PINSERT)) {
             for (var result : results) {
                 if (count % 1000 == 0) {
                     connection.commit();
@@ -92,6 +76,15 @@ public class SqliteValidationWriter implements ValidationResultWriter {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void finish() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            // ouch
         }
     }
 }

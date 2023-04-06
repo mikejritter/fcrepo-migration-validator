@@ -150,6 +150,7 @@ public class Fedora3ValidationExecutionManager implements ValidationExecutionMan
      */
     private void awaitCompletion() throws InterruptedException {
         semaphore.acquire(config.getThreadCount());
+        writer.finish();
     }
 
     /**
