@@ -165,7 +165,7 @@ public class Driver implements Callable<Integer> {
         final var executionManager = new Fedora3ValidationExecutionManager(appConfig);
         final var completedRun = executionManager.doValidation();
 
-        if (completedRun) {
+        if (completedRun && !config.isSqlite()) {
             final ReportHandler reportHandler;
             if (reportType == ReportType.html) {
                 reportHandler = new HtmlReportHandler(config.getReportDirectory(reportType),
@@ -177,12 +177,10 @@ public class Driver implements Callable<Integer> {
             final var generator = new ReportGeneratorImpl(config.getJsonOutputDirectory(), reportHandler);
             final var summaryFile = generator.generate();
             LOGGER.info("Validation report summary written to: {}", summaryFile);
+        } else if (config.isSqlite()) {
+            appConfig.closeConnection();
         } else {
             LOGGER.warn("Skipping report writing due to exception");
-        }
-
-        if (config.isSqlite()) {
-            appConfig.closeConnection();
         }
 
         return completedRun ? 0 : 1;
