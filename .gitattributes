@@ -1,1 +1,17 @@
-*   text
+* text
+*.java text diff=java
+
+# Fedora 3
+*.0 eol=lf
+
+# Fedora 6
+*.nt eol=lf
+*.json eol=lf
+*.sha512 eol=lf
+
+# Images
+*REF binary
+*REF.0 binary
+*THUMB binary
+*THUMB.0 binary
+*MASTER0 binary
