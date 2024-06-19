@@ -7,6 +7,7 @@
 *.0 binary
 ADMINMD binary
 BIB0 binary
+props binary
 
 # Images
 *REF binary
