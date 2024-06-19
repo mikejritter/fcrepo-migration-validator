@@ -2,19 +2,19 @@
 *.json text
 *.java text diff=java
 
-# Fedora 3
-# The line endings for these files are a mix of lf and crlf
-# Set to binary in order for them not to be changed when building on Windows
+# Keep the line endings for some test files by setting to binary
+# This is to allow tests to pass in windows and *nix
 *.0 binary
+ADMINMD binary
+BIB0 binary
+
+# Images
+*REF binary
+*THUMB binary
+*MASTER0 binary
 
 # Fedora 6
 *.nt eol=lf
 *.json eol=lf
 *.sha512 eol=lf
 
-# Images
-*REF binary
-*REF.0 binary
-*THUMB binary
-*THUMB.0 binary
-*MASTER0 binary
