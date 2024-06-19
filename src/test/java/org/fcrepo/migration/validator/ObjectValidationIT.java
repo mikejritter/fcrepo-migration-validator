@@ -9,6 +9,8 @@ import org.fcrepo.migration.validator.api.ValidationResult;
 import org.fcrepo.migration.validator.impl.Fedora3ValidationExecutionManager;
 import org.fcrepo.migration.validator.report.ResultsReportHandler;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
@@ -84,6 +86,8 @@ public class ObjectValidationIT extends AbstractValidationIT {
                                     ObjectMetadataValidation.CREATED_DATE, ObjectMetadataValidation.LAST_MODIFIED_DATE);
     }
 
+    private static final Logger log = LoggerFactory.getLogger(ObjectValidationIT.class);
+
     @Test
     public void testNumberOfObjectsFailMoreOcfl() {
         final File f3DatastreamsDir = new File(FIXTURES_BASE_DIR, "bad-num-objects-more-ocfl/f3/datastreams");
@@ -93,6 +97,7 @@ public class ObjectValidationIT extends AbstractValidationIT {
 
         // verify expected results (1 object in f3, 2 objects in OCFL)
         final var errors = reportHandler.getErrors();
+        log.info("{}", errors);
         assertEquals("Should be one error!", 1, errors.size());
 
         final var validationResult = errors.get(0);
@@ -110,6 +115,7 @@ public class ObjectValidationIT extends AbstractValidationIT {
 
         // verify expected results (2 objects in f3, 1 object in OCFL)
         final var errors = reportHandler.getErrors();
+        log.info("{}", errors);
         final var sourceObject = "1711.dl:UWPAbout";
 
         assertEquals("Should be two errors!", 2, errors.size());
