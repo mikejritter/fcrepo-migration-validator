@@ -1,8 +1,11 @@
 * text
+*.json text
 *.java text diff=java
 
 # Fedora 3
-*.0 eol=lf
+# The line endings for these files are a mix of lf and crlf
+# Set to binary in order for them not to be changed when building on Windows
+*.0 binary
 
 # Fedora 6
 *.nt eol=lf
