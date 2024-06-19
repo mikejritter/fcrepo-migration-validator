@@ -8,6 +8,8 @@
 ADMINMD binary
 BIB0 binary
 props binary
+TECH0 binary
+TECH1 binary
 
 # Images
 *REF binary
@@ -18,4 +20,3 @@ props binary
 *.nt eol=lf
 *.json eol=lf
 *.sha512 eol=lf
-
